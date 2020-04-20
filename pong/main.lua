@@ -46,7 +46,9 @@ function love.load()--executed once in the start
     player1score=0
     player2score=0
     servingplayer=1
+    multiplayer=0
     winningplayer=1
+    x=0
     gameState="start"
 end
 
@@ -94,7 +96,7 @@ function love.update(dt)--update
             ball.dy=-ball.dy
             sounds["wall_rebound"]:play()
         end
-
+        
         if ball.x<0 then-- if the ball is  past the first player then player2 scores and player 1 serves
             sounds["score_sound"]:play()
             servingplayer=1
@@ -122,15 +124,28 @@ function love.update(dt)--update
         end
     end
 
-    
+    --player 1 is comp
+    if gameState=="play" and multiplayer==0 then --if against bot
+        
+        player1.y=ball.y-10
+        if ball.dy<0 then 
+            player1.dy=-PADDLE_SPEED
+        else
+            player1.dy=PADDLE_SPEED
+        end
+        
 
-    if love.keyboard.isDown('w') then 
-        player1.dy=-PADDLE_SPEED--decreases value as its the up button for every dt time
-    elseif love.keyboard.isDown('s') then
-        player1.dy=PADDLE_SPEED--increases value as its the down button for every dt time
-    else
-        player1.dy=0
+    elseif gameState=="start" or gameState=="serve" or gameState=="play" or gameState=="Done" and multiplayer==1 then --if multiplayer
+
+        if love.keyboard.isDown('w') then 
+            player1.dy=-PADDLE_SPEED--decreases value as its the up button for every dt time
+        elseif love.keyboard.isDown('s') then
+            player1.dy=PADDLE_SPEED--increases value as its the down button for every dt time
+        else
+            player1.dy=0
+        end
     end
+
 
     if love.keyboard.isDown('up') then
         player2.dy=-PADDLE_SPEED
@@ -150,13 +165,31 @@ end
 function love.keypressed(key)
     if key=="escape" then
         love.event.quit()
+
+    elseif gameState=="option" then
+        if key=="1" then
+            multiplayer=0
+        elseif key=="2" then
+            multiplayer=1
+        end
+        gameState="serve"
+    
+    
     elseif key=="enter" or key == 'return' then
+        
         if gameState=="start" then
-            gameState="serve"
+            if x==1 then 
+                gameState="serve"
+            else
+                gameState="option"
+                x=1
+            end
+
+        
         elseif gameState=="serve" then
             gameState="play"
         elseif gameState=="Done" then
-            gameState="serve"
+            gameState="option"
             ball:reset()
 
             player1score=0
@@ -180,14 +213,21 @@ function love.draw()
     
     if gameState=="start" then 
         love.graphics.setFont(smallfont)
-        love.graphics.printf("Welcome to Pong Boiz!",0, 10, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("Welcome to Pong!",0, 10, VIRTUAL_WIDTH, 'center')
         love.graphics.printf("Press Enter to begin",0,20,VIRTUAL_WIDTH,"center")
+
+    elseif gameState=="option"then
+        love.graphics.setFont(smallfont)
+        --love.graphics.printf("Player"..tostring(servingplayer).."'s serve!",0,10,VIRTUAL_WIDTH,"center")
+        love.graphics.printf("Press 1 for AI Bot",0,10,VIRTUAL_WIDTH,"center")
+        love.graphics.printf("Press 2 for Multiplayer",0,30,VIRTUAL_WIDTH,"center")
+
     elseif gameState=="serve"then
         love.graphics.setFont(smallfont)
-        love.graphics.printf("Player"..tostring(servingplayer).."'s serve!",0,10,VIRTUAL_WIDTH,"center")
         love.graphics.printf("Press Enter to serve",0,20,VIRTUAL_WIDTH,"center")
+
     elseif gameState=="play" then
-        love.graphics.printf("Lets Play Pong Boiz!",0, 20, VIRTUAL_WIDTH, 'center')
+        love.graphics.printf("Lets Play Pong!",0, 20, VIRTUAL_WIDTH, 'center')
     elseif gameState=="Done" then
         love.graphics.setFont(largeFont)
         love.graphics.printf("Player"..tostring(winningplayer).." wins!",0,10,VIRTUAL_WIDTH,"center")
@@ -196,7 +236,7 @@ function love.draw()
 
     end
     love.graphics.setFont(scorefont)
-    love.graphics.print(tostring(player1score),VIRTUAL_WIDTH/2-50,VIRTUAL_HEIGHT/3)
+    love.graphics.print(tostring(player1score),VIRTUAL_WIDTH/2-60,VIRTUAL_HEIGHT/3)
     love.graphics.print(tostring(player2score),VIRTUAL_WIDTH/2+50,VIRTUAL_HEIGHT/3)
     --love.graphics.rectangle("fill",10,player1Y,5,20)--left paddle
     -- love.graphics.rectangle("fill",VIRTUAL_WIDTH-10,player2Y,5,20)--right paddle
@@ -205,6 +245,11 @@ function love.draw()
     player2:render()
     ball:render()
     displayFPS()
+    love.graphics.setFont(smallfont)
+    love.graphics.setColor(255,255,255,255)
+    love.graphics.line(VIRTUAL_WIDTH/2,0,VIRTUAL_WIDTH/2,VIRTUAL_HEIGHT)
+    love.graphics.line(0,0,VIRTUAL_WIDTH,0)
+    love.graphics.line(0,VIRTUAL_HEIGHT,VIRTUAL_WIDTH,VIRTUAL_HEIGHT)
     push:apply("end")
 end
 

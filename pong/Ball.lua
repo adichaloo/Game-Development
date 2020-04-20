@@ -33,5 +33,5 @@ function Ball:reset()--reset the ball after every point
 end
 
 function Ball:render()--ball design
-    love.graphics.rectangle("fill",self.x,self.y,self.width,self.height)
+    love.graphics.rectangle("fill",self.x-2,self.y-2,self.width,self.height)
 end
