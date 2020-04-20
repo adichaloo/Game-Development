@@ -5,7 +5,7 @@ WINDOW_HEIGHT=800
 
 VIRTUAL_WIDTH=432
 VIRTUAL_HEIGHT=243
---virtual resolution for decreasing the resolution giving it a more retro look 
+--virtual resolution for decreasing the resolution giving a more retro look 
 PADDLE_SPEED=200
 
 push=require "push"
