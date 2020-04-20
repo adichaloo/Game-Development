@@ -20,7 +20,7 @@ function love.load()--executed once in the start
     --     vsync=true
     -- })
     math.randomseed(os.time())--seed
-    love.graphics.setDefaultFilter("nearest","nearest")--nearest neighbor interpolation technique
+    love.graphics.setDefaultFilter("nearest","nearest")--nearest neighbor (no-interpolation technique)
     smallfont=love.graphics.newFont("font.ttf",8)
     largeFont = love.graphics.newFont('font.ttf', 16)
     scorefont=love.graphics.newFont("font.ttf",32)
